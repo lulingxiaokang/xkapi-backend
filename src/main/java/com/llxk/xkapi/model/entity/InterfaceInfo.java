@@ -37,6 +37,9 @@ public class InterfaceInfo implements Serializable {
 
     /**
      * 请求参数
+     * [
+     *     {"mame": "username", "type": string}
+     * ]
      */
     private String requestParams;
 

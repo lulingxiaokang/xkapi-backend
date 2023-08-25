@@ -24,11 +24,13 @@ public class InterfaceInfoServiceImpl extends ServiceImpl<InterfaceInfoMapper, I
         }
 
         String name = interfaceInfo.getName();
+        String url = interfaceInfo.getUrl();
+        String method = interfaceInfo.getMethod();
 
 
         // 创建时，所有参数必须非空
         if (add) {
-            if (StringUtils.isAnyBlank(name)) {
+            if (StringUtils.isAnyBlank(name, url, method)) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR);
             }
         }

@@ -2,20 +2,21 @@ package com.llxk.xkapi.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.google.gson.Gson;
 import com.llxk.xkapi.annotation.AuthCheck;
-import com.llxk.xkapi.common.BaseResponse;
-import com.llxk.xkapi.common.DeleteRequest;
-import com.llxk.xkapi.common.ErrorCode;
-import com.llxk.xkapi.common.ResultUtils;
+import com.llxk.xkapi.common.*;
 import com.llxk.xkapi.constant.CommonConstant;
 import com.llxk.xkapi.exception.BusinessException;
 import com.llxk.xkapi.model.dto.interfaceinfo.InterfaceInfoAddRequest;
+import com.llxk.xkapi.model.dto.interfaceinfo.InterfaceInfoInvokeRequest;
 import com.llxk.xkapi.model.dto.interfaceinfo.InterfaceInfoQueryRequest;
 import com.llxk.xkapi.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.llxk.xkapi.model.entity.InterfaceInfo;
 import com.llxk.xkapi.model.entity.User;
+import com.llxk.xkapi.model.enums.InterfaceInfoStatusEnum;
 import com.llxk.xkapi.service.InterfaceInfoService;
 import com.llxk.xkapi.service.UserService;
+import com.llxk.xkapiclientsdk.client.XkApiClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -26,7 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * 帖子接口
+ * 接口管理
  *
  * @author llxk
  */
@@ -40,6 +41,11 @@ public class InterfaceInfoController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private XkApiClient xkApiClient;
+
+
 
     // region 增删改查
 
@@ -195,5 +201,108 @@ public class InterfaceInfoController {
     }
 
     // endregion
+
+    /**
+     * 发布
+     *
+     * @param idRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/online")
+    @AuthCheck(mustRole = "admin")
+    public BaseResponse<Boolean> onlineInterfaceInfo(@RequestBody IdRequest idRequest,
+                                                     HttpServletRequest request) {
+        if(idRequest == null || idRequest.getId() <= 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 判断是否存在
+        long id = idRequest.getId();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        //判断接口是否可以调用
+        //TODO 判断是否可以调用时应该根据测试地址来选择方法调用，而不是调用固定方法
+        com.llxk.xkapiclientsdk.model.User user = new com.llxk.xkapiclientsdk.model.User();
+        user.setUsername("test");
+        String username = xkApiClient.getNameByPost(user);
+        if(StringUtils.isBlank(username)){
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "接口验证失败");
+        }
+
+
+        // 仅本人或管理员可修改
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        interfaceInfo.setId(id);
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.ONLINE.getValue());
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 下线
+     *
+     * @param idRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/offline")
+    @AuthCheck(mustRole = "admin")
+    public BaseResponse<Boolean> offlineInterfaceInfo(@RequestBody IdRequest idRequest,
+                                                     HttpServletRequest request) {
+        if(idRequest == null || idRequest.getId() <= 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 判断是否存在
+        long id = idRequest.getId();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+
+        // 仅本人或管理员可修改
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        interfaceInfo.setId(id);
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.OFFLINE.getValue());
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 测试调用
+     *
+     * @param interfaceInfoInvokeRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/invoke")
+    public BaseResponse<Object> invokeInterfaceInfo(@RequestBody InterfaceInfoInvokeRequest interfaceInfoInvokeRequest,
+                                                      HttpServletRequest request) {
+        if(interfaceInfoInvokeRequest == null || interfaceInfoInvokeRequest.getId() <= 0){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+
+        long id = interfaceInfoInvokeRequest.getId();
+        String userRequestParams = interfaceInfoInvokeRequest.getUserRequestParams();
+        // 判断是否存在
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        if(oldInterfaceInfo.getStatus() != InterfaceInfoStatusEnum.ONLINE.getValue()){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "接口未开启");
+        }
+
+        User loginUser = userService.getLoginUser(request);
+        String accessKey = loginUser.getAccessKey();
+        String secretKey = loginUser.getSecretKey();
+        XkApiClient tmpClient = new XkApiClient(accessKey, secretKey);
+        Gson gson = new Gson();
+        com.llxk.xkapiclientsdk.model.User user = gson.fromJson(userRequestParams, com.llxk.xkapiclientsdk.model.User.class);
+        String nameByPost = tmpClient.getNameByPost(user);
+
+        return ResultUtils.success(nameByPost);
+    }
 
 }
