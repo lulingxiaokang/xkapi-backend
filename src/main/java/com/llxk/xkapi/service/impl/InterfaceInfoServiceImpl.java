@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.llxk.xkapi.common.ErrorCode;
 import com.llxk.xkapi.exception.BusinessException;
 import com.llxk.xkapi.mapper.InterfaceInfoMapper;
-import com.llxk.xkapi.model.entity.InterfaceInfo;
 import com.llxk.xkapi.service.InterfaceInfoService;
+import com.llxk.xkapicommon.model.entity.InterfaceInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 

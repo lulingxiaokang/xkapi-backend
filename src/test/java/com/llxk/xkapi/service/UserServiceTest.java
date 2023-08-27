@@ -1,6 +1,7 @@
 package com.llxk.xkapi.service;
 
-import com.llxk.xkapi.model.entity.User;
+
+import com.llxk.xkapicommon.model.entity.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

@@ -1,7 +1,8 @@
 package com.llxk.xkapi.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.llxk.xkapi.model.entity.UserInterfaceInfo;
+import com.llxk.xkapicommon.model.entity.UserInterfaceInfo;
+
 
 /**
 * @author llxk
@@ -16,6 +17,7 @@ public interface UserInterfaceInfoService extends IService<UserInterfaceInfo> {
      * @param add 是否为创建校验
      */
     void validUserInterfaceInfo(UserInterfaceInfo userInterfaceInfo, boolean add);
+
 
     /**
      * 调用接口统计

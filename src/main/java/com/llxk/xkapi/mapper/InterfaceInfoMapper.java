@@ -1,7 +1,8 @@
 package com.llxk.xkapi.mapper;
 
-import com.llxk.xkapi.model.entity.InterfaceInfo;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.llxk.xkapicommon.model.entity.InterfaceInfo;
 
 /**
 * @author llxk

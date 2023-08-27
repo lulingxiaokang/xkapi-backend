@@ -6,8 +6,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * ClassName: UserInterfaceInfoServiceTest
  * Package: com.llxk.xkapi.service
@@ -22,6 +20,10 @@ class UserInterfaceInfoServiceTest {
 
     @Resource
     private UserInterfaceInfoService userInterfaceInfoService;
+
+   /* @Resource
+    private InnerUserInterfaceInfoService innerUserInterfaceInfoService;
+    */
     @Test
     void invokeCount() {
         boolean b = userInterfaceInfoService.invokeCount(1L, 1L);

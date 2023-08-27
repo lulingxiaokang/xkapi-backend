@@ -2,7 +2,7 @@ package com.llxk.xkapi.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.llxk.xkapi.model.entity.User;
+import com.llxk.xkapicommon.model.entity.User;
 
 import javax.servlet.http.HttpServletRequest;
 

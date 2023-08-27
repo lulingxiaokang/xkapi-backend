@@ -1,7 +1,7 @@
 package com.llxk.xkapi.service;
 
-import com.llxk.xkapi.model.entity.InterfaceInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.llxk.xkapicommon.model.entity.InterfaceInfo;
 
 /**
 * @author llxk

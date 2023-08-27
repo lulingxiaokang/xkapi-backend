@@ -5,8 +5,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.llxk.xkapi.common.ErrorCode;
 import com.llxk.xkapi.exception.BusinessException;
 import com.llxk.xkapi.mapper.UserInterfaceInfoMapper;
-import com.llxk.xkapi.model.entity.UserInterfaceInfo;
 import com.llxk.xkapi.service.UserInterfaceInfoService;
+import com.llxk.xkapicommon.model.entity.UserInterfaceInfo;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoMapper, UserInterfaceInfo>
-    implements UserInterfaceInfoService{
+    implements UserInterfaceInfoService {
 
     @Override
     public void validUserInterfaceInfo(UserInterfaceInfo userInterfaceInfo, boolean add) {
@@ -38,6 +38,12 @@ public class UserInterfaceInfoServiceImpl extends ServiceImpl<UserInterfaceInfoM
 
     }
 
+    /**
+     * 接口调用次数 + 1
+     * @param interfaceInfoId 接口id
+     * @param userId 用户id
+     * @return
+     */
     @Override
     public boolean invokeCount(long interfaceInfoId, long userId) {
         //校验

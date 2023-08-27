@@ -1,7 +1,10 @@
 package com.llxk.xkapi.mapper;
 
-import com.llxk.xkapi.model.entity.UserInterfaceInfo;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.llxk.xkapicommon.model.entity.UserInterfaceInfo;
+
+import java.util.List;
 
 /**
 * @author llxk
@@ -10,6 +13,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.llxk.xkapi.model.entity.UserInterfaceInfo
 */
 public interface UserInterfaceInfoMapper extends BaseMapper<UserInterfaceInfo> {
+
+
+
+    List<UserInterfaceInfo> listTopInvokeInterfaceInfo(int limit);
 
 }
 
